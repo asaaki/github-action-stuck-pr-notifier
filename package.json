@@ -1,0 +1,46 @@
+{
+  "name": "github-action-stuck-pr-notifier",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Automatically label and mention/notify users about stuck pull requests.",
+  "homepage": "https://github.com/jrylan/github-action-stuck-pr-notifier#readme",
+  "bugs": {
+    "url": "https://github.com/jrylan/github-action-stuck-pr-notifier/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jrylan/github-action-stuck-pr-notifier.git"
+  },
+  "license": "ISC",
+  "author": {
+    "name": "Jeremy Rylan",
+    "email": "jeremyrylan@me.com",
+    "url": "https://github.com/jrylan"
+  },
+  "sideEffects": false,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "files": [
+    "dist/index.js"
+  ],
+  "scripts": {
+    "build": "ncc build src/action.ts"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^3.0.0",
+    "ms": "^2.1.2"
+  },
+  "devDependencies": {
+    "@types/ms": "^0.7.31",
+    "@types/node": "^14.0.13",
+    "@zeit/ncc": "^0.22.3",
+    "cspell": "^4.0.63",
+    "prettier": "^2.0.5",
+    "prettier-plugin-packagejson": "^2.2.5",
+    "typescript": "^3.9.5"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
