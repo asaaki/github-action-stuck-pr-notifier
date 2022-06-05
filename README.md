@@ -19,64 +19,38 @@ Pairs very well with the [Auto Approve action by Harry Marr][auto-approve].
 ### Pre-requisites
 
 Create a label in your repo to assign to stuck pull requests.
-
-The default label this action uses is "stuck", but you can use any label.
-
-**!!! The label must be setup before using this action. !!!**
+The default label this action uses is `stuck`, but you can use any label.
 
 ### Inputs
 
 :heavy_exclamation_mark: = Required
 
-<table>
-  <thead>
-    <tr>
-      <th width="1%">&nbsp;</th>
-      <th width="20%">Input</th>
-      <th width="10%">Default</th>
-      <th width="69%">Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>:heavy_exclamation_mark:</td>
-      <td>repo-token</td>
-      <td>&nbsp;</td>
-      <td>Input for `secrets.GITHUB_TOKEN`.</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>cutoff</td>
-      <td>24h</td>
-      <td>The cutoff time period before a pull request is considered stuck. The value will be passed to the <a href="https://www.npmjs.com/package/ms">ms</a> package.</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>label</td>
-      <td>stuck</td>
-      <td>
-        Name of the label to assign to stuck pull requests.<br /><br />
-        <strong>The supplied label must already exist. This action will not create a new label.</strong>
-      </td>
-    </tr>
-    <tr>
-      <td>:heavy_exclamation_mark:</td>
-      <td>message</td>
-      <td>&nbsp;</td>
-      <td>The comment message to post on the pull request to notify a user.</td>
-    </tr>
-    <tr>
-      <td>:heavy_exclamation_mark:</td>
-      <td>search-query</td>
-      <td>&nbsp;</td>
-      <td>
-        Search query to pass to the pull request search.<br/><br />
-        The value provided will be appended to the base search query, which looks something like this:<br />
-        "repo:${GITHUB_REPOSITORY} is:pr is:open created:<=${createdSinceCutOff} -label:${stuckLabel}"
-      </td>
-    </tr>
-  </tbody>
-</table>
+#### `repo-token` ❗
+
+Input for `${{ secrets.GITHUB_TOKEN }}`.
+
+#### `cutoff`
+- Default: `24h`
+
+The cutoff time period before a pull request is considered stuck. The value will be passed to the ms package.
+
+#### `label`
+- Default: `stuck`
+
+Name of the label to assign to stuck pull requests. 
+The supplied label must already exist. This action will _not_ create a new label.
+
+#### `message`❗
+The comment message to post on the pull request to notify a user.
+
+#### `search-query`❗
+
+Search query to pass to the pull request search. 
+The value provided will be appended to the base search query, which looks something like this: 
+
+```
+repo:${GITHUB_REPOSITORY} is:pr is:open created:<=${createdSinceCutOff} -label:${stuckLabel}
+```
 
 ### Example workflow
 
