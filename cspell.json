@@ -1,5 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
-  "version": "0.1",
+  "version": "0.2",
   "words": ["jrylan", "octokit", "packagejson", "parens", "rylan"]
 }

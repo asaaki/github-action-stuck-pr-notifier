@@ -5,4 +5,4 @@ branding:
 description: 'Automatically label and mention/notify users about stuck pull requests.'
 runs:
   main: 'dist/index.js'
-  using: 'node12'
+  using: 'node16'

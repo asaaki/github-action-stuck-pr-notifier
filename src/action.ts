@@ -119,8 +119,12 @@ const run = async () => {
     }
 
     await updatePullRequests(context, data)
-  } catch (err) {
-    core.setFailed(err)
+  } catch (err: unknown) {
+    if (typeof err === 'string') {
+      core.setFailed(err)
+    } else if (err instanceof Error) {
+      core.setFailed(err.message)
+    }
   }
 }
 

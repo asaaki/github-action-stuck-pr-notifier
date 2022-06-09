@@ -1,6 +1,6 @@
 {
   "name": "github-action-stuck-pr-notifier",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Automatically label and mention/notify users about stuck pull requests.",
   "homepage": "https://github.com/jrylan/github-action-stuck-pr-notifier#readme",
@@ -28,19 +28,19 @@
   },
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "@actions/github": "^3.0.0",
+    "@actions/github": "^5.0.0",
     "ms": "^2.1.2"
   },
   "devDependencies": {
     "@types/ms": "^0.7.31",
-    "@types/node": "^14.0.13",
-    "@zeit/ncc": "^0.22.3",
-    "cspell": "^4.0.63",
-    "prettier": "^2.0.5",
-    "prettier-plugin-packagejson": "^2.2.5",
-    "typescript": "^3.9.5"
+    "@types/node": "^16.11.39",
+    "@vercel/ncc": "^0.34.0",
+    "cspell": "^6.1.1",
+    "prettier": "^2.6.2",
+    "prettier-plugin-packagejson": "^2.2.18",
+    "typescript": "^4.7.3"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16 <17"
   }
 }
