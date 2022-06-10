@@ -6,12 +6,17 @@ export interface Config {
   search: string
 }
 
+export interface TeamsAndUsers {
+  teams: string[]
+  users: string[]
+}
+
 export interface PullRequestInfo {
   id: string
   permalink: string
 }
 
-export interface InfoQueryResult {
+export type InfoQueryResult = {
   repo: {
     label: {
       id: string
@@ -25,6 +30,15 @@ export interface InfoQueryResult {
     totalCount: number
     pullRequests: PullRequestInfo[]
   }
+  __teams?: ObjectIdable
+} & ObjectIdable
+
+export interface ObjectIdable {
+  [name: string]: ObjectId
+}
+
+export interface ObjectId {
+  id: string
 }
 
 export interface Context {

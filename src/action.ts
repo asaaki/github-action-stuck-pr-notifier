@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import { getOctokit } from '@actions/github'
 import ms from 'ms'
 
-import { Config, Context, InfoQueryResult } from './types'
+import { Config, Context, InfoQueryResult, TeamsAndUsers } from './types'
 import { updatePullRequests } from './updatePullRequests'
 import { getInput } from './utils/getInput'
 
@@ -40,11 +40,26 @@ const run = async () => {
     const stuckLabel = config.label
     const message = getInput('message', { required: true })
     const mentions = message.match(/(?<a>@[a-zA-Z0-9\/_-]+)/g) || []
-    const assigneeIdsFromInput = (getInput('assigneeIds') || '').split(' ').filter(e => e != '')
-    const assigneeIds = assigneeIdsFromInput.concat(mentions)
+    const assigneeSlugsFromInput = (getInput('assigneeIds') || '').split(' ').filter(e => e != '')
+    const assigneeSlugs = assigneeSlugsFromInput.concat(mentions)
     const stuckCutoff = ms(config.cutoff)
     const stuckSearch = config['search']
     const createdSince = generateCutoffDateString(stuckCutoff)
+
+    const teamsAndUsers = assigneeSlugs.reduce(
+      (tau: TeamsAndUsers, slug): TeamsAndUsers => {
+        // teams always have a '/' and users never have that
+        if (slug.match('/')) {
+          // only take name after slash; we assume to only work in a single org
+          // without cross-org teams here
+          tau.teams.push(slug.split('/')[1])
+        } else {
+          tau.users.push(slug)
+        }
+        return tau
+      },
+      { teams: [], users: [] }
+    )
 
     const queryVarArgs: string = Object.entries({
       repoOwner: 'String!',
@@ -57,6 +72,27 @@ const run = async () => {
       .join(', ')
 
     const prNodeArgs = 'type: ISSUE, first: 100'
+
+    let teamSubQuery = '__teams: organization(login: $repoOwner) { orgId: id }'
+    if (teamsAndUsers.teams.length > 0) {
+      const teams = teamsAndUsers.teams.map((v, i) => {
+        return `__team_${i}: team(slug: "${v}")\n`
+      }).join("\n")
+      teamSubQuery = `
+        __teams: organization(login: $repoOwner) {
+          orgId: id
+          ${teams}
+        }
+      `
+    }
+    let usersSubQuery = ''
+    if (teamsAndUsers.users.length > 0) {
+      usersSubQuery = teamsAndUsers.users
+        .map((v, i) => {
+          return `__user_${i}: user(login: "${v}")\n`
+        })
+        .join('\n')
+    }
 
     const query = `
       query GetStuckPRs(${queryVarArgs}) {
@@ -83,6 +119,8 @@ const run = async () => {
             }
           }
         }
+        ${teamSubQuery}
+        ${usersSubQuery}
       }
     `
 
@@ -116,6 +154,19 @@ const run = async () => {
       const total = data.prevStuckPRs.totalCount
       debug(`Found ${total.toLocaleString('en')} previously stuck ${total === 1 ? 'PR' : 'PRs'}.`)
     }
+
+    let teamIds: string[] = []
+    if (data.__teams) {
+      teamIds = Object.values(data.__teams).flatMap(Object.values)
+    }
+
+    let userIds: string[] = []
+    const userKeys = Object.keys(data).filter(k => k.match(/^__user/))
+    for (const key in userKeys) {
+      userIds.push(data[key].id)
+    }
+
+    const assigneeIds = teamIds.concat(userIds)
 
     const context: Context = {
       client,
