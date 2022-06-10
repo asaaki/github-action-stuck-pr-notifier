@@ -73,14 +73,13 @@ const run = async () => {
 
     const prNodeArgs = 'type: ISSUE, first: 100'
 
-    let teamSubQuery = '__teams: organization(login: $repoOwner) { orgId: id }'
+    let teamSubQuery = ''
     if (teamsAndUsers.teams.length > 0) {
       const teams = teamsAndUsers.teams.map((v, i) => {
         return `__team_${i}: team(slug: "${v}") { id }\n`
       }).join("\n")
       teamSubQuery = `
         __teams: organization(login: $repoOwner) {
-          orgId: id
           ${teams}
         }
       `
