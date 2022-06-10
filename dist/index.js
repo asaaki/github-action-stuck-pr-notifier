@@ -9059,7 +9059,7 @@ const updatePullRequests = async (context, data) => {
     ];
     const queryVarsDef = {
         labelIds: ['[ID!]!', [labelId]],
-        assigneeIds: ['[ID!]', assigneeIds]
+        assigneeIds: ['[ID!]!', assigneeIds]
     };
     if (stuckPRs.pullRequests.length > 0) {
         queryVarsDef.commentBody = ['String!', message];
