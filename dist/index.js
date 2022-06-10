@@ -8953,7 +8953,7 @@ const run = async () => {
         let teamSubQuery = '__teams: organization(login: $repoOwner) { orgId: id }';
         if (teamsAndUsers.teams.length > 0) {
             const teams = teamsAndUsers.teams.map((v, i) => {
-                return `__team_${i}: team(slug: "${v}")\n`;
+                return `__team_${i}: team(slug: "${v}") { id }\n`;
             }).join("\n");
             teamSubQuery = `
         __teams: organization(login: $repoOwner) {
@@ -8966,7 +8966,7 @@ const run = async () => {
         if (teamsAndUsers.users.length > 0) {
             usersSubQuery = teamsAndUsers.users
                 .map((v, i) => {
-                return `__user_${i}: user(login: "${v}")\n`;
+                return `__user_${i}: user(login: "${v}") { id }\n`;
             })
                 .join('\n');
         }
