@@ -19,9 +19,11 @@ inputs:
   cutoff:
     description: Period after which a PR is considered stuck; defaults to 24h
     required: false
+    default: 24h
   label:
     description: What label to apply to the stuck PRs; defaults to `stuck`
     required: false
+    default: stuck
 
 runs:
   main: 'dist/index.js'
