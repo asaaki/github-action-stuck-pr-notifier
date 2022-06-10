@@ -43,7 +43,7 @@ export const updatePullRequests = async (
   ]
 
   const queryVarsDef: { [key: string]: [string, unknown] } = {
-    labelIds: ['[String!]!', [labelId]]
+    labelIds: ['[ID!]!', [labelId]]
   }
 
   if (stuckPRs.pullRequests.length > 0) {
