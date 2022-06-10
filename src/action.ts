@@ -33,7 +33,7 @@ const run = async () => {
       cutoff: getInput('cutoff') || '24h',
       label: getInput('label') || 'stuck',
       message: getInput('message', { required: true }),
-      search: getInput('search-params') || getInput('search-query', { required: true })
+      search: getInput('search-query', { required: true })
     }
 
     const stuckLabel = config.label

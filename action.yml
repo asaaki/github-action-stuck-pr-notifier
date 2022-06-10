@@ -1,8 +1,28 @@
 name: 'Stuck Pull Request Notifier'
+
+description: 'Automatically label and mention/notify users about stuck pull requests.'
+
 branding:
   color: 'yellow'
   icon: 'alert-triangle'
-description: 'Automatically label and mention/notify users about stuck pull requests.'
+
+inputs:
+  repo-token:
+    description: Usually a GITHUB_TOKEN with enough permissions to comment on PRs
+    required: true
+  message:
+    description: The text of the comment on the PRs which got stuck
+    required: true
+  search-query:
+    description: Search query to filter the open PRs; example `author:app/dependabot` for dependabot PRs
+    required: true
+  cutoff:
+    description: Period after which a PR is considered stuck; defaults to 24h
+    required: false
+  label:
+    description: What label to apply to the stuck PRs; defaults to `stuck`
+    required: false
+
 runs:
   main: 'dist/index.js'
   using: 'node16'
