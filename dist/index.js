@@ -8912,15 +8912,19 @@ const generateCutoffDateString = (cutoff) => {
 const escapeStr = (str) => JSON.stringify(str).slice(1, -1);
 const run = async () => {
     try {
-        const client = (0, github_1.getOctokit)((0, getInput_1.getInput)('repo-token', { required: true }));
+        const repoToken = (0, getInput_1.getInput)('repo-token', { required: true });
+        const client = (0, github_1.getOctokit)(repoToken);
         const [repoOwner, repoName] = GITHUB_REPOSITORY.split('/');
         const config = {
             cutoff: (0, getInput_1.getInput)('cutoff') || '24h',
             label: (0, getInput_1.getInput)('label') || 'stuck',
-            message: (0, getInput_1.getInput)('message', { required: true }),
             search: (0, getInput_1.getInput)('search-query', { required: true })
         };
         const stuckLabel = config.label;
+        const message = (0, getInput_1.getInput)('message', { required: true });
+        const mentions = message.match(/(?<a>@[a-zA-Z0-9\/_-]+)/g) || [];
+        const assigneeIdsFromInput = ((0, getInput_1.getInput)('assigneeIds') || '').split(' ').filter(e => e != '');
+        const assigneeIds = assigneeIdsFromInput.concat(mentions);
         const stuckCutoff = (0, ms_1.default)(config.cutoff);
         const stuckSearch = config['search'];
         const createdSince = generateCutoffDateString(stuckCutoff);
@@ -8986,8 +8990,9 @@ const run = async () => {
         }
         const context = {
             client,
-            config,
-            labelId: data.repo.label.id
+            message,
+            labelId: data.repo.label.id,
+            assigneeIds
         };
         await (0, updatePullRequests_1.updatePullRequests)(context, data);
     }
@@ -9015,16 +9020,22 @@ exports.updatePullRequests = void 0;
 // spell-checker:ignore labelable
 const core_1 = __nccwpck_require__(2186);
 const updatePullRequests = async (context, data) => {
-    const { client, config, labelId } = context;
+    const { client, message, labelId, assigneeIds } = context;
     const { stuckPRs, prevStuckPRs } = data;
     (0, core_1.debug)('Generating UpdatePRs mutation');
     const mutations = [
         ...stuckPRs.pullRequests.map((pr, i) => {
             const labelArgs = `input: { labelableId:"${pr.id}", labelIds: $labelIds }`;
+            const assignArgs = `input: { assignableId:"${pr.id}", assigneeIds: $assigneeIds }`;
             const commentArgs = `input: { subjectId: "${pr.id}", body: $commentBody }`;
             return `
         labelPr_${i}: addLabelsToLabelable(${labelArgs}) {
           labelable {
+            __typename
+          }
+        }
+        assignPr_${i}: addAssigneesToAssignable(${assignArgs}) {
+          assignable {
             __typename
           }
         }
@@ -9047,15 +9058,15 @@ const updatePullRequests = async (context, data) => {
         })
     ];
     const queryVarsDef = {
-        labelIds: ['[ID!]!', [labelId]]
+        labelIds: ['[ID!]!', [labelId]],
+        assigneeIds: ['[ID!]', assigneeIds]
     };
     if (stuckPRs.pullRequests.length > 0) {
-        queryVarsDef.commentBody = ['String!', config.message];
+        queryVarsDef.commentBody = ['String!', message];
     }
     const queryArgsStr = Object.entries(queryVarsDef)
         .map(([key, value]) => `$${key}: ${value[0]}`)
         .join(', ');
-    // @ts-ignore Object.fromEntries is too new for TS right now
     const queryVars = Object.fromEntries(Object.entries(queryVarsDef).map(([key, value]) => [key, value[1]]));
     const query = `mutation UpdatePRs (${queryArgsStr}) {\n${mutations.join('\n')}\n}`;
     (0, core_1.debug)(`Sending UpdatePRs mutation request:\n${query}`);

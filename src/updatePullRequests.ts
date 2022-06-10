@@ -7,7 +7,7 @@ export const updatePullRequests = async (
   context: Context,
   data: InfoQueryResult
 ): Promise<void> => {
-  const { client, config, labelId } = context
+  const { client, message, labelId, assigneeIds } = context
   const { stuckPRs, prevStuckPRs } = data
 
   debug('Generating UpdatePRs mutation')
@@ -15,11 +15,17 @@ export const updatePullRequests = async (
   const mutations = [
     ...stuckPRs.pullRequests.map((pr, i) => {
       const labelArgs = `input: { labelableId:"${pr.id}", labelIds: $labelIds }`
+      const assignArgs = `input: { assignableId:"${pr.id}", assigneeIds: $assigneeIds }`
       const commentArgs = `input: { subjectId: "${pr.id}", body: $commentBody }`
 
       return `
         labelPr_${i}: addLabelsToLabelable(${labelArgs}) {
           labelable {
+            __typename
+          }
+        }
+        assignPr_${i}: addAssigneesToAssignable(${assignArgs}) {
+          assignable {
             __typename
           }
         }
@@ -43,18 +49,18 @@ export const updatePullRequests = async (
   ]
 
   const queryVarsDef: { [key: string]: [string, unknown] } = {
-    labelIds: ['[ID!]!', [labelId]]
+    labelIds: ['[ID!]!', [labelId]],
+    assigneeIds: ['[ID!]', assigneeIds]
   }
 
   if (stuckPRs.pullRequests.length > 0) {
-    queryVarsDef.commentBody = ['String!', config.message]
+    queryVarsDef.commentBody = ['String!', message]
   }
 
   const queryArgsStr = Object.entries(queryVarsDef)
     .map(([key, value]) => `$${key}: ${value[0]}`)
     .join(', ')
 
-  // @ts-ignore Object.fromEntries is too new for TS right now
   const queryVars = Object.fromEntries(
     Object.entries(queryVarsDef).map(([key, value]) => [key, value[1]])
   )

@@ -21,9 +21,13 @@ inputs:
     required: false
     default: 24h
   label:
-    description: What label to apply to the stuck PRs; defaults to `stuck`
+    description: What label to apply to the stuck PRs; LABEL NEEDS TO EXIST; defaults to `stuck`
     required: false
     default: stuck
+  assigneeIds:
+    description: Which user(s) or team(s) to assign the PRs to, space separated; example '@user1 @user 2'
+    required: false
+    default: ''
 
 runs:
   main: 'dist/index.js'

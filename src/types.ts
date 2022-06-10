@@ -3,7 +3,6 @@ import { getOctokit } from '@actions/github'
 export interface Config {
   cutoff: string
   label: string
-  message: string
   search: string
 }
 
@@ -30,6 +29,7 @@ export interface InfoQueryResult {
 
 export interface Context {
   client: ReturnType<typeof getOctokit>
-  config: Config
+  message: string
   labelId: string
+  assigneeIds: string[]
 }

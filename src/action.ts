@@ -27,16 +27,21 @@ const escapeStr = (str: string): string => JSON.stringify(str).slice(1, -1)
 
 const run = async () => {
   try {
-    const client = getOctokit(getInput('repo-token', { required: true }))
+    const repoToken = getInput('repo-token', { required: true });
+    const client = getOctokit(repoToken)
     const [repoOwner, repoName] = GITHUB_REPOSITORY.split('/')
+
     const config: Config = {
       cutoff: getInput('cutoff') || '24h',
       label: getInput('label') || 'stuck',
-      message: getInput('message', { required: true }),
       search: getInput('search-query', { required: true })
     }
 
     const stuckLabel = config.label
+    const message = getInput('message', { required: true })
+    const mentions = message.match(/(?<a>@[a-zA-Z0-9\/_-]+)/g) || []
+    const assigneeIdsFromInput = (getInput('assigneeIds') || '').split(' ').filter(e => e != '')
+    const assigneeIds = assigneeIdsFromInput.concat(mentions)
     const stuckCutoff = ms(config.cutoff)
     const stuckSearch = config['search']
     const createdSince = generateCutoffDateString(stuckCutoff)
@@ -114,8 +119,9 @@ const run = async () => {
 
     const context: Context = {
       client,
-      config,
-      labelId: data.repo.label.id
+      message,
+      labelId: data.repo.label.id,
+      assigneeIds
     }
 
     await updatePullRequests(context, data)
