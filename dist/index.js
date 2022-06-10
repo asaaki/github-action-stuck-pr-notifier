@@ -8918,7 +8918,7 @@ const run = async () => {
             cutoff: (0, getInput_1.getInput)('cutoff') || '24h',
             label: (0, getInput_1.getInput)('label') || 'stuck',
             message: (0, getInput_1.getInput)('message', { required: true }),
-            search: (0, getInput_1.getInput)('search-params') || (0, getInput_1.getInput)('search-query', { required: true })
+            search: (0, getInput_1.getInput)('search-query', { required: true })
         };
         const stuckLabel = config.label;
         const stuckCutoff = (0, ms_1.default)(config.cutoff);
@@ -9047,7 +9047,7 @@ const updatePullRequests = async (context, data) => {
         })
     ];
     const queryVarsDef = {
-        labelIds: ['[String!]!', [labelId]]
+        labelIds: ['[ID!]!', [labelId]]
     };
     if (stuckPRs.pullRequests.length > 0) {
         queryVarsDef.commentBody = ['String!', config.message];
