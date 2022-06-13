@@ -8961,6 +8961,7 @@ const run = async () => {
         }
       `;
         }
+        debug(`Will use following sub query for finding team IDs:\n${teamSubQuery}`);
         let usersSubQuery = '';
         if (teamsAndUsers.users.length > 0) {
             usersSubQuery = teamsAndUsers.users
@@ -8969,6 +8970,7 @@ const run = async () => {
             })
                 .join('\n');
         }
+        debug(`Will use following sub query for finding user IDs:\n${usersSubQuery}`);
         const query = `
       query GetStuckPRs(${queryVarArgs}) {
         repo: repository(owner: $repoOwner, name: $repoName) {
