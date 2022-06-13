@@ -154,10 +154,16 @@ const run = async () => {
       debug(`Found ${total.toLocaleString('en')} previously stuck ${total === 1 ? 'PR' : 'PRs'}.`)
     }
 
+    debug(`Collect team IDs under data.__teams: ${data.__teams}`)
+
     let teamIds: string[] = []
     if (data.__teams) {
       teamIds = Object.values(data.__teams).flatMap(Object.values)
     }
+
+    debug(`Found ${teamIds.length} teams.`)
+
+    debug(`Collect user IDs under data ...`)
 
     let userIds: string[] = []
     const userKeys = Object.keys(data).filter(k => k.match(/^__user/))
@@ -165,7 +171,11 @@ const run = async () => {
       userIds.push(data[key].id)
     }
 
+    debug(`Found ${userIds.length} users.`)
+
     const assigneeIds = teamIds.concat(userIds)
+
+    debug(`Will use ${assigneeIds.length} teams+users to inform about stuck PRs.`)
 
     const context: Context = {
       client,

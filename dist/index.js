@@ -9021,16 +9021,21 @@ const run = async () => {
             const total = data.prevStuckPRs.totalCount;
             debug(`Found ${total.toLocaleString('en')} previously stuck ${total === 1 ? 'PR' : 'PRs'}.`);
         }
+        debug(`Collect team IDs under data.__teams: ${data.__teams}`);
         let teamIds = [];
         if (data.__teams) {
             teamIds = Object.values(data.__teams).flatMap(Object.values);
         }
+        debug(`Found ${teamIds.length} teams.`);
+        debug(`Collect user IDs under data ...`);
         let userIds = [];
         const userKeys = Object.keys(data).filter(k => k.match(/^__user/));
         for (const key in userKeys) {
             userIds.push(data[key].id);
         }
+        debug(`Found ${userIds.length} users.`);
         const assigneeIds = teamIds.concat(userIds);
+        debug(`Will use ${assigneeIds.length} teams+users to inform about stuck PRs.`);
         const context = {
             client,
             message,
