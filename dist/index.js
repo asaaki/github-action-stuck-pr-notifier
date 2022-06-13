@@ -9021,7 +9021,7 @@ const run = async () => {
             const total = data.prevStuckPRs.totalCount;
             debug(`Found ${total.toLocaleString('en')} previously stuck ${total === 1 ? 'PR' : 'PRs'}.`);
         }
-        debug(`Collect team IDs under data.__teams: ${data.__teams}`);
+        debug(`Collect team IDs under data.__teams:\n${JSON.stringify(data.__teams)}`);
         let teamIds = [];
         if (data.__teams) {
             teamIds = Object.values(data.__teams).flatMap(Object.values);

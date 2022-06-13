@@ -154,7 +154,7 @@ const run = async () => {
       debug(`Found ${total.toLocaleString('en')} previously stuck ${total === 1 ? 'PR' : 'PRs'}.`)
     }
 
-    debug(`Collect team IDs under data.__teams: ${data.__teams}`)
+    debug(`Collect team IDs under data.__teams:\n${JSON.stringify(data.__teams)}`)
 
     let teamIds: string[] = []
     if (data.__teams) {
