@@ -9011,6 +9011,7 @@ const run = async () => {
             stuckPRsQuery,
             prevStuckPRsQuery
         });
+        debug(`InfoQueryResult data:\n${JSON.stringify(data)}`);
         if (data.stuckPRs.totalCount === 0 && data.prevStuckPRs.totalCount === 0) {
             debug('No stuck PRs found.');
             return;
